@@ -92,6 +92,8 @@ def handle_args():
     parser.add_argument('-c', '--camera', help='opencv camera number, ex. -c 1', type=int, default=0)
     parser.add_argument('-i', '--ipaddress', help='listening ip address, default all ips', type=str,
                         default='0.0.0.0')
+    parser.add_argument('--width', help='resolution width, default is 640', type=int, default=640)
+    parser.add_argument('--height', help='resolution height, default is 480', type=int, default=480)
     params = vars(parser.parse_args())
     return params
 
@@ -101,6 +103,8 @@ def main():
 
     params = handle_args()
     capture = cv2.VideoCapture(params['camera'])
+    capture.set(3, params['width'])
+    capture.set(4, params['height'])
     server = ThreadedHTTPServer((params['ipaddress'], params['port']), CamHandler)
 
     try:
@@ -109,6 +113,7 @@ def main():
     except KeyboardInterrupt:
         capture.release()
         server.socket.close()
+        exit()
 
 
 if __name__ == '__main__':
